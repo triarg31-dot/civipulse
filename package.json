@@ -18,5 +18,9 @@
     "url": "https://github.com/triarg31-dot/civipulse/issues"
   },
   "homepage": "https://github.com/triarg31-dot/civipulse#readme",
-  "private": true
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ]
 }
