@@ -17,5 +17,6 @@
   "bugs": {
     "url": "https://github.com/triarg31-dot/civipulse/issues"
   },
-  "homepage": "https://github.com/triarg31-dot/civipulse#readme"
+  "homepage": "https://github.com/triarg31-dot/civipulse#readme",
+  "private": true
 }
