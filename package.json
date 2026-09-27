@@ -1,0 +1,21 @@
+{
+  "name": "civipulse",
+  "version": "1.0.0",
+  "description": "AI-powered civic issue reporting and resolution platform.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/triarg31-dot/civipulse.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/triarg31-dot/civipulse/issues"
+  },
+  "homepage": "https://github.com/triarg31-dot/civipulse#readme"
+}
