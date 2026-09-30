@@ -1,0 +1,133 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum UserRole {
+  CITIZEN
+  MODERATOR
+  AUTHORITY
+  ADMIN
+}
+
+enum IssueStatus {
+  OPEN
+  TRIAGED
+  ASSIGNED
+  IN_PROGRESS
+  RESOLVED
+  CLOSED
+}
+
+enum IssuePriority {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+model User {
+  id          String   @id @default(cuid())
+  firebaseUid String   @unique
+  email       String   @unique
+  displayName String?
+  role        UserRole @default(CITIZEN)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  reportedIssues Issue[]              @relation("ReporterIssues")
+  assignedIssues Issue[]              @relation("AssignedIssues")
+  comments       IssueComment[]
+  statusChanges  IssueStatusHistory[]
+}
+
+model Issue {
+  id          String        @id @default(cuid())
+  title       String
+  description String
+  category    String
+  status      IssueStatus   @default(OPEN)
+  priority    IssuePriority @default(MEDIUM)
+
+  latitude  Float?
+  longitude Float?
+  address   String?
+
+  aiSummary           String?
+  aiSuggestedPriority IssuePriority?
+  aiConfidence        Float?
+
+  reporterId String
+  reporter   User   @relation("ReporterIssues", fields: [reporterId], references: [id])
+
+  assigneeId String?
+  assignee   User?   @relation("AssignedIssues", fields: [assigneeId], references: [id])
+
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  resolvedAt DateTime?
+
+  attachments IssueAttachment[]
+  comments    IssueComment[]
+  history     IssueStatusHistory[]
+
+  @@index([status])
+  @@index([category])
+  @@index([priority])
+  @@index([reporterId])
+  @@index([assigneeId])
+  @@index([latitude, longitude])
+}
+
+model IssueAttachment {
+  id      String @id @default(cuid())
+  issueId String
+  issue   Issue  @relation(fields: [issueId], references: [id], onDelete: Cascade)
+
+  storageKey  String
+  fileName    String
+  contentType String
+  url         String?
+
+  createdAt DateTime @default(now())
+
+  @@index([issueId])
+}
+
+model IssueComment {
+  id       String @id @default(cuid())
+  issueId  String
+  authorId String
+
+  body String
+
+  issue  Issue @relation(fields: [issueId], references: [id], onDelete: Cascade)
+  author User  @relation(fields: [authorId], references: [id])
+
+  createdAt DateTime @default(now())
+
+  @@index([issueId])
+  @@index([authorId])
+}
+
+model IssueStatusHistory {
+  id      String @id @default(cuid())
+  issueId String
+  actorId String
+
+  fromStatus IssueStatus?
+  toStatus   IssueStatus
+  note       String?
+
+  issue Issue @relation(fields: [issueId], references: [id], onDelete: Cascade)
+  actor User  @relation(fields: [actorId], references: [id])
+
+  createdAt DateTime @default(now())
+
+  @@index([issueId])
+  @@index([actorId])
+}
